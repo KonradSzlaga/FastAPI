@@ -15,4 +15,3 @@ aiofiles
 jinja2
 starlette
 sqlalchemy_orm
-secrets

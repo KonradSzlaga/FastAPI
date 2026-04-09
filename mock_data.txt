@@ -1,0 +1,18 @@
+INSERT INTO users (id, email, username, first_name, last_name, hashed_password, is_active, role) VALUES
+(1, 'john.doe@example.com', 'johndoe', 'John', 'Doe', 'hashed_pass_1', true, 'admin'),
+(2, 'anna.smith@example.com', 'annasmith', 'Anna', 'Smith', 'hashed_pass_2', true, 'user'),
+(3, 'mike.jones@example.com', 'mikej', 'Mike', 'Jones', 'hashed_pass_3', true, 'user'),
+(4, 'kate.brown@example.com', 'kateb', 'Kate', 'Brown', 'hashed_pass_4', false, 'user'),
+(5, 'tom.white@example.com', 'tomwhite', 'Tom', 'White', 'hashed_pass_5', true, 'moderator'),
+(6, 'lisa.green@example.com', 'lisag', 'Lisa', 'Green', 'hashed_pass_6', true, 'user'),
+(7, 'peter.black@example.com', 'peterb', 'Peter', 'Black', 'hashed_pass_7', false, 'user');
+
+
+INSERT INTO todos (id, title, description, priority, complete, owner_id) VALUES
+(1, 'Buy groceries', 'Milk, Eggs, Bread', 1, false, 1),
+(2, 'Finish project', 'Complete FastAPI project', 3, false, 2),
+(3, 'Workout', 'Go to the gym for 1 hour', 2, true, 3),
+(4, 'Read book', 'Read 50 pages of a novel', 1, false, 4),
+(5, 'Fix bugs', 'Resolve issues in backend', 3, false, 1),
+(6, 'Meeting', 'Team meeting at 10 AM', 2, true, 5),
+(7, 'Clean house', 'Vacuum and dust', 1, false, 6);

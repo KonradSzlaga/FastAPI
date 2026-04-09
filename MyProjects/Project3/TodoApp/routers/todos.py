@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-router=APIRouter()
 
 from pydantic import BaseModel, Field
 
@@ -29,6 +28,7 @@ uvicorn main:app --reload
 
 """
 
+router=APIRouter()
 
 def get_db():
     db = SessionLocal()
@@ -55,10 +55,14 @@ class TodoRequest(BaseModel):
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def read_all(user:user_dependency, db:db_dependency):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Authentication Failed')
     return db.query(Todos).filter(Todos.owner_id==user.get('id')).all()
 
 @router.get("/todo/{todo_id}", status_code=status.HTTP_200_OK)
-async def read_todo(db:db_dependency, todo_id:int = Path(gt=0)):
+async def read_todo(user:user_dependency, db:db_dependency, todo_id:int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Authentication Failed')
     todo_model = db.query(Todos).filter(Todos.id==todo_id).first()
     if todo_model is not None:
         return todo_model
@@ -74,7 +78,7 @@ async def create_todo(  user:user_dependency,
                         ):
 
     if user is None:
-        raise HTTPException(status_code=401, detail='Authentication Failes')
+        raise HTTPException(status_code=401, detail='Authentication Failed')
 
     todo_model=Todos(**todo_request.model_dump(), owner_id=user.get('id'))
 
@@ -86,11 +90,14 @@ async def create_todo(  user:user_dependency,
 
 
 @router.put("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_todo(db:db_dependency, 
+async def update_todo(user:user_dependency,
+                      db:db_dependency, 
                       todo_request:TodoRequest,
                       todo_id:int = Path(gt=0)
                       ):
-    
+    if user is None:
+        raise HTTPException(status_code=401, detail='Authentication Failed')
+
     todo_model=db.query(Todos).filter(Todos.id==todo_id).first()
     if todo_model is None:
         raise HTTPException(status_code=404, detail="Todo not found")
@@ -105,9 +112,12 @@ async def update_todo(db:db_dependency,
 
 
 @router.delete("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_todo(db:db_dependency, 
+async def delete_todo(user:user_dependency,
+                      db:db_dependency, 
                       todo_id:int = Path(gt=0)
                       ):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Authentication Failed')
     
     todo_model=db.query(Todos).filter(Todos.id==todo_id).first()
     if todo_model is None:

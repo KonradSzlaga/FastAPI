@@ -135,11 +135,11 @@ def authenticate_user(username: str, password: str, db):
 
 
 # Funkcja tworząca token JWT.
-def create_access_token(username: str, user_id: int, expires_delta: timedelta):
+def create_access_token(username: str, user_id: int, role:str, expires_delta: timedelta):
     # Dane, które zapisujemy w tokenie.
     # 'sub' (subject) zwyczajowo oznacza główny identyfikator użytkownika.
     # 'id' to nasze dodatkowe pole.
-    encode = {'sub': username, 'id': user_id}
+    encode = {'sub': username, 'id': user_id, 'role':role}
 
     # Ustawiamy datę wygaśnięcia tokenu.
     # Użycie timezone.utc jest dobrą praktyką,
@@ -166,6 +166,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         # Odczytujemy dane zapisane wcześniej w tokenie.
         username: str = payload.get('sub')
         user_id: int = payload.get('id')
+        user_role:str = payload.get('role')
 
         # Jeśli brakuje wymaganych danych, uznajemy token za nieważny.
         if username is None or user_id is None:
@@ -178,7 +179,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         # Często potem używa się tego w chronionych endpointach.
         return {
             "username": username,
-            "id": user_id
+            "id": user_id,
+            "user_role":user_role
         }
 
     # Jeśli dekodowanie tokenu się nie powiedzie,
@@ -259,6 +261,7 @@ async def login_for_access_token(
     token = create_access_token(
         user.username,
         user.id,
+        user.role,
         timedelta(minutes=20)
     )
 

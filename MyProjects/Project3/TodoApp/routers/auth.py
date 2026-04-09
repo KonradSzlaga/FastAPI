@@ -84,6 +84,7 @@ class CreateUserRequest(BaseModel):
     last_name: str
     password: str
     role: str
+    phone_number: str
 
 
 # Schemat odpowiedzi dla endpointu logowania.
@@ -211,7 +212,8 @@ async def create_user(
             hashed_password=bcrypt_context.hash(create_user_request.password),
 
             role=create_user_request.role,
-            is_active=True
+            is_active=True,
+            phone_number=create_user_request.phone_number
         )
 
         # Dodajemy nowy rekord do sesji.
